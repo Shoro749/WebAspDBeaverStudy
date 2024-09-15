@@ -54,7 +54,7 @@ using (var serviceScope = app.Services.CreateScope())
         var bread = new CategoryEntity
         {
             Name = "Bread",
-            Image = "https://mind.ua/openmind/20206794-hlibne-pitannya-pro-mifi-ta-korist-bezdrizhdzhovogo-hliba",
+            Image = "https://ukr.media/static/ba/aimg/3/7/7/377126_1.jpg",
             Description = "У сегменті ринку «здорового харчування» існують сорти хліба, " +
             "які майже не сприяють набору зайвої ваги – наприклад, цільнозерновий хліб."
         };
