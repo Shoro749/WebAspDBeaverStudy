@@ -11,10 +11,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .container .inputDiv {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .inputDiv {
+            gap: 20px;
+        }
+
+        #catalog {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            padding: 20px;
+        }
+
+        .elem {
+            border: 2px solid black;
+            border-radius: 7%;
+            background: gainsboro;
+            width: 250px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+            .elem > img {
+                flex-basis: 50%;
+            }
+    </style>
 </head>
 
 <body>
-    
+    <div class="container">
+        <div class="inputDiv">
+            <div>
+                <span>Name</span>
+                <input type="text" id="name">
+            </div>
+            <div>
+                <span>Description</span>
+                <input type="text" id="desc">
+            </div>
+            <div>
+                <span>Choose photo</span>
+                <input type="file" id="photo" accept="image/png, image/jpeg">
+                <img id="imgPhoto" src="" alt="image" style="max-width: 300px; display: none;">
+            </div>
+            <button id="bSubmit">Submit</button>
+        </div>
+        <div id="catalog">
+        </div>
+    </div>
+    <script>
+        document.getElementById('photo').addEventListener('change', function (event) {
+            const input = event.target;
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = document.getElementById('imgPhoto');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        document.getElementById('bSubmit').addEventListener('click', () => {
+            let name = document.getElementById('name');
+            let desc = document.getElementById('desc');
+            let imgPhoto = document.getElementById('imgPhoto').src;
+            if (imgPhoto && imgPhoto !== "" && desc.value.trim() !== "" && name.value.trim() !== "") {
+                document.getElementById('catalog').innerHTML +=
+                    `
+                            <div class="elem">
+                                <img src="${imgPhoto}" alt="img" id="categoryImg">
+                                <h4 id="elemName">${name.value}</h4>
+                                <span id="elemDesc">${desc.value}</span>
+                            </div>`;
+
+                document.getElementById('name').value = '';
+                document.getElementById('desc').value = '';
+                document.getElementById('photo').value = '';
+                document.getElementById('imgPhoto').src = '';
+                document.getElementById('imgPhoto').style.display = 'none';
+            } else {
+                alert('Fill in the fields!')
+            }
+        });
+    </script>
 </body>
 
 </html>
