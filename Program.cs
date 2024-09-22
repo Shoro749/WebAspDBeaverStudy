@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("MyConectionDB")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("MyConnectionDB")));
 
 builder.Services.AddControllersWithViews();
 
@@ -58,6 +58,10 @@ using (var serviceScope = app.Services.CreateScope())
             Description = "У сегменті ринку «здорового харчування» існують сорти хліба, " +
             "які майже не сприяють набору зайвої ваги – наприклад, цільнозерновий хліб."
         };
+        context.Categories.Add(sausage);
+context.Categories.Add(cheese);
+        context.Categories.Add(bread);
+        context.SaveChanges();
     }
 }
 
