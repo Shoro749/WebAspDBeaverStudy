@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAspDBeaverStudy.Data;
+using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Models.Category;
 
 namespace WebAspDBeaverStudy.Controllers
@@ -33,6 +34,7 @@ namespace WebAspDBeaverStudy.Controllers
         [HttpPost] // Отримуємо дані із форми 
         public IActionResult Create(CategoryCreateViewModel model)
         {
+            var entity = new CategoryEntity();
             // Збережемо в базу даних інформації
             var dirName = "uploading";
             var dirSave = Path.Combine(_environment.WebRootPath, dirName);  
@@ -49,9 +51,14 @@ namespace WebAspDBeaverStudy.Controllers
                 var saveFile = Path.Combine(dirSave, fileName);
                 using (var stream = new FileStream(saveFile, FileMode.Create))
                     model.Photo.CopyTo(stream);
+                entity.Image = fileName;
             }
-            // Що отримали те й повертаємо назад
-            return View(model);
+            entity.Name = model.Name;
+            entity.Description = model.Description;
+            _dbContext.Categories.Add(entity);
+            _dbContext.SaveChanges();
+            // Переходимо до списку усіх категорій, тобто визиваємо метод Index нашого контролера
+            return Redirect("/");
         }
     }
 }
