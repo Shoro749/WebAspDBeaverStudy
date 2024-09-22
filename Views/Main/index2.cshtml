@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Форма</title>
+</head>
+<body>
+    <form id="info_form" action="Index.cshtml">
+        <input type="text" id="name" name="name" placeholder="Enter name.." />
+        <input type="text" id="desc" name="desc" placeholder="Enter description.." />
+        <input type="file" id="photo" accept="image/png, image/jpeg">
+        <img id="imgPhoto" src="" alt="image" style="max-width: 300px; display: none;">
+        <input type="submit" />
+    </form>
+    <script>
+        document.getElementById('photo').addEventListener('change', function (event) {
+            const input = event.target;
+
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const img = document.getElementById('imgPhoto');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                };
+
+                reader.readAsDataURL(file);
+            }
+        });
+
+        let info_form = document.querySelector('#info_form')
+        info_form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+
+            const name = document.getElementById('name').value;
+            const desc = document.getElementById('desc').value;
+            let imgPhoto = document.getElementById('imgPhoto').src;
+
+            if (imgPhoto && imgPhoto !== "" && desc.value.trim() !== "" && name.value.trim() !== "") {
+                sessionStorage.setItem("NAME", name);
+                sessionStorage.setItem("DESC", desc);
+                sessionStorage.setItem("IMG", imgPhoto);
+
+                console.log(window.location.origin)
+                window.location.href = `${window.location.origin}/less_7-9/share-data-between-html-pages-master/result.html`
+            }
+            else {
+                alert('Fill in the fields!')
+            }
+        })
+    </script>
+</body>
+</html>
