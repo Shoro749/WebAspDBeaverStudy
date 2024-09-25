@@ -34,8 +34,8 @@
                 <p>Буде проведено видалення <span id="categoryName"></span>?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Видалити</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-primary" id="confirmDelete">Видалити</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="cancelDelete">Скасувати</button>
             </div>
         </div>
     </div>
@@ -45,7 +45,6 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
-
             var buttonsDelete = document.querySelectorAll('[data-delete]');
 
             console.log("Loading app", buttonsDelete);
@@ -55,6 +54,20 @@
                     var id = this.getAttribute('data-delete');
                     console.log("Delete id", id);
                     modalDelete.show();
+
+                    confirmDelete.addEventListener("click", () => {
+                        fetch(`/Main/Delete/${id}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                        })
+                        modalDelete.hide();
+                    });
+
+                    cancelDelete.addEventListener("click", () => {
+                        modalDelete.hide();
+                    });
                 });
             });
         });
