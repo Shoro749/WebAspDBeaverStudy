@@ -13,6 +13,7 @@
                         <h5 class="card-title">@item.Name</h5>
                         <p class="card-text">@item.Description</p>
                         <a href="#" class="btn btn-primary" data-delete="@item.Id">Delete</a>
+                        <a class="btn btn-primary" data-edit="@item.Id" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                     </div>
                 </div>
             </div>
@@ -45,13 +46,13 @@
         document.addEventListener("DOMContentLoaded", () => {
             var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
             var buttonsDelete = document.querySelectorAll('[data-delete]');
+            var buttonsEdit = document.querySelectorAll('[data-edit]');
 
             console.log("Loading app", buttonsDelete);
             buttonsDelete.forEach(btn => {
                 btn.addEventListener("click", function (event) {
                     event.preventDefault();
                     var id = this.getAttribute('data-delete');
-                    console.log("Delete id", id);
                     modalDelete.show();
 
                     confirmDelete.addEventListener("click", () => {
@@ -67,6 +68,14 @@
                     cancelDelete.addEventListener("click", () => {
                         modalDelete.hide();
                     });
+                });
+            });
+
+            buttonsEdit.forEach(btn => {
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    var id = this.getAttribute('data-edit');
+                    window.location.href = `/Main/Edit/${id}`;
                 });
             });
         });

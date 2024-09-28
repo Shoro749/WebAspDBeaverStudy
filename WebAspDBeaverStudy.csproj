@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Main\Edit.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Shared\Edit.cshtml" />
     <None Include="Views\Shared\_MyLayout.cshtml" />
   </ItemGroup>
 
@@ -20,6 +25,14 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\uploading\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Main\Edit.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Main\Edit.cshtml" />
   </ItemGroup>
 
 </Project>

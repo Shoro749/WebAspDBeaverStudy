@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Models.Category;
@@ -75,7 +76,56 @@ namespace WebAspDBeaverStudy.Controllers
 
                 _dbContext.Categories.Remove(category);
                 _dbContext.SaveChanges();
+                return RedirectToAction("Index");
             }
+            return Redirect("/");
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var item = _dbContext.Categories.Find(id);
+            var model = new CategoryEditViewModel
+            {
+                Id = item.Id,
+                Name = item.Name,
+                Description = item.Description,
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(CategoryEditViewModel model)
+        {
+            var id = model.Id;
+            var entity = _dbContext.Categories.Find(model.Id);
+            var dirName = "uploading";
+            var dirSave = Path.Combine(_environment.WebRootPath, dirName);
+            if (!Directory.Exists(dirSave))
+            {
+                Directory.CreateDirectory(dirSave);
+            }
+            if (model.Photo != null)
+            {
+                string fileName = Guid.NewGuid().ToString();
+                var ext = Path.GetExtension(model.Photo.FileName);
+                fileName += ext;
+                var saveFile = Path.Combine(dirSave, fileName);
+                using (var stream = new FileStream(saveFile, FileMode.Create))
+                    model.Photo.CopyTo(stream);
+
+                var oldFile = Path.Combine(_environment.WebRootPath, "uploading", entity.Image);
+                if (System.IO.File.Exists(oldFile))
+                {
+                    System.IO.File.Delete(oldFile);
+                }
+                entity.Image = fileName;
+            }
+            entity.Name = model.Name;
+            entity.Description = model.Description;
+
+            _dbContext.SaveChanges();
+
             return Redirect("/");
         }
     }
