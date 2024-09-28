@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp.Formats.Webp;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Models.Category;
@@ -97,7 +98,6 @@ namespace WebAspDBeaverStudy.Controllers
         [HttpPost]
         public IActionResult Edit(CategoryEditViewModel model)
         {
-            var id = model.Id;
             var entity = _dbContext.Categories.Find(model.Id);
             var dirName = "uploading";
             var dirSave = Path.Combine(_environment.WebRootPath, dirName);
@@ -121,6 +121,7 @@ namespace WebAspDBeaverStudy.Controllers
                 }
                 entity.Image = fileName;
             }
+
             entity.Name = model.Name;
             entity.Description = model.Description;
 
