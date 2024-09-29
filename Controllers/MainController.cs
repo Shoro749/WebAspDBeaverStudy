@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
+using WebAspDBeaverStudy.Interfaces;
 using WebAspDBeaverStudy.Models.Category;
 
 namespace WebAspDBeaverStudy.Controllers
@@ -8,11 +9,12 @@ namespace WebAspDBeaverStudy.Controllers
     public class MainController : Controller
     {
         private readonly AppDbContext _dbContext;
+        private readonly IImageWorker _imageWorker;
         private readonly IWebHostEnvironment _environment;
 
         //DI - Depencecy Injection
         public MainController(AppDbContext context,
-            IWebHostEnvironment environment)
+            IWebHostEnvironment environment, IImageWorker imageWorker)
         {
             _dbContext = context;
             _environment = environment;
@@ -72,10 +74,8 @@ namespace WebAspDBeaverStudy.Controllers
 
             if (!string.IsNullOrEmpty(category.Name))
             {
-                var dirName = "uploading";
-                var fileSave = Path.Combine(_environment.WebRootPath, dirName, category.Image);
-                if (System.IO.File.Exists(fileSave))
-                    System.IO.File.Delete(fileSave);
+                _imageWorker.Delete(category.Image);
+
             }
 
 			_dbContext.Categories.Remove(category);
