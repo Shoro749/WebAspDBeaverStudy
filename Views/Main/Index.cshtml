@@ -7,13 +7,14 @@
     <div class="row">
         @foreach (var item in Model)
         {
-            <div class="col-md-3">
+            <div class="col-md-3" id="@("ProductItem" + item.Id)">
                 <div class="card" style="width: 100%;">
                     <img src="/uploading/@item.Image" class="card-img-top">
                     <div class="card-body">
                         <h5 class="card-title">@item.Name</h5>
                         <p class="card-text">@item.Description</p>
-                        <a href="#" class="btn btn-primary" data-delete="@item.Id">Delete</a>
+                        <a href="#" class="btn btn-primary" data-name="@item.Name" 
+                        data-delete="@item.Id">Delete</a>
                     </div>
                 </div>
             </div>
@@ -33,28 +34,45 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
-                <button type="button" class="btn btn-primary">Підтвердити</button>
+                <button type="button" class="btn btn-primary" id="deleteYes">Підтвердити</button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+	<script src="/lib/axios/axios.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
-
             var buttonsDelete = document.querySelectorAll('[data-delete]');
+            var categoryName = document.getElementById("categoryName");
+            var idDelete = 0;
 
             console.log("Loading app", buttonsDelete);
             buttonsDelete.forEach(btn => {
                 btn.addEventListener("click", function (event) {
                     event.preventDefault();
                     var id = this.getAttribute('data-delete');
-                    console.log("Delete id", id);
+                    var name = this.getAttribute('data-name');
+                    // console.log("Delete id", id);
+                    // console.log("Delete name", name);
+                    idDelete = id;
+                    categoryName.innerHTML = name;
                     modalDelete.show();
                 });
             });
+
+            document.getElementById("deleteYes").addEventListener("click", () => {
+                console.log("Delete by id", idDelete);
+                axios.post("/Main/Delete/" + idDelete)
+                    .then(res => {
+                        //window.location.reload();
+                        modalDelete.hide();
+                        document.getElementById("ProductItem" + idDelete).remove();
+                        //console.log("Successful deleted")
+                    })
+            })
         });
     </script>
 }

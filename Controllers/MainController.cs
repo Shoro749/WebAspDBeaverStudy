@@ -60,5 +60,28 @@ namespace WebAspDBeaverStudy.Controllers
             // Переходимо до списку усіх категорій, тобто визиваємо метод Index нашого контролера
             return Redirect("/");
         }
-    }
+
+		[HttpPost]
+		public IActionResult Delete(int id)
+		{
+			var category = _dbContext.Categories.Find(id);
+			if (category == null)
+			{
+				return NotFound();
+			}
+
+            if (!string.IsNullOrEmpty(category.Name))
+            {
+                var dirName = "uploading";
+                var fileSave = Path.Combine(_environment.WebRootPath, dirName, category.Image);
+                if (System.IO.File.Exists(fileSave))
+                    System.IO.File.Delete(fileSave);
+            }
+
+			_dbContext.Categories.Remove(category);
+			_dbContext.SaveChanges();
+
+			return Json(new { text="Deleted" });
+		}
+	}
 }
