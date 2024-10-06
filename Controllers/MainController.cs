@@ -18,6 +18,7 @@ namespace WebAspDBeaverStudy.Controllers
         {
             _dbContext = context;
             _environment = environment;
+            _imageWorker = imageWorker;
         }
 
         // Метод у контролері називається - action - дія
@@ -33,55 +34,53 @@ namespace WebAspDBeaverStudy.Controllers
             return View();
         }
 
-        [HttpPost] // Отримуємо дані із форми 
+        [HttpPost] //це означає, що ми отримуємо дані із форми від клієнта
         public IActionResult Create(CategoryCreateViewModel model)
         {
             var entity = new CategoryEntity();
-            // Збережемо в базу даних інформації
+            //Збережння в Базу даних інформації
             var dirName = "uploading";
-            var dirSave = Path.Combine(_environment.WebRootPath, dirName);  
+            var dirSave = Path.Combine(_environment.WebRootPath, dirName);
             if (!Directory.Exists(dirSave))
             {
                 Directory.CreateDirectory(dirSave);
             }
             if (model.Photo != null)
             {
-                // Унікальне значення (неповторне)
-                string fileName = Guid.NewGuid().ToString();
-                var ext = Path.GetExtension(model.Photo.FileName);
-                fileName += ext;
-                var saveFile = Path.Combine(dirSave, fileName);
-                using (var stream = new FileStream(saveFile, FileMode.Create))
-                    model.Photo.CopyTo(stream);
-                entity.Image = fileName;
+                //унікальне значенн, яке ніколи не повториться
+                //string fileName = Guid.NewGuid().ToString();
+                //var ext = Path.GetExtension(model.Photo.FileName);
+                //fileName += ext;
+                //var saveFile = Path.Combine(dirSave, fileName);
+                //using (var stream = new FileStream(saveFile, FileMode.Create)) 
+                //    model.Photo.CopyTo(stream);
+                entity.Image = _imageWorker.Save(model.Photo);
             }
             entity.Name = model.Name;
             entity.Description = model.Description;
             _dbContext.Categories.Add(entity);
             _dbContext.SaveChanges();
-            // Переходимо до списку усіх категорій, тобто визиваємо метод Index нашого контролера
+            //Переходимо до списку усіх категорій, тобото визиваємо метод Index нашого контролера
             return Redirect("/");
         }
 
-		[HttpPost]
-		public IActionResult Delete(int id)
-		{
-			var category = _dbContext.Categories.Find(id);
-			if (category == null)
-			{
-				return NotFound();
-			}
-
-            if (!string.IsNullOrEmpty(category.Name))
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var category = _dbContext.Categories.Find(id);
+            if (category == null)
             {
-                _imageWorker.Delete(category.Image);
-
+                return NotFound();
             }
 
-			_dbContext.Categories.Remove(category);
-			_dbContext.SaveChanges();
+            if (!string.IsNullOrEmpty(category.Image))
+            {
+                _imageWorker.Delete(category.Image);
+            }
+            _dbContext.Categories.Remove(category);
+            _dbContext.SaveChanges();
 
-			return Json(new { text="Deleted" });
-		}
-	}
+            return Json(new { text = "Ми його видалили" }); // Вертаю об'єкт у відповідь
+        }
+    }
 }
