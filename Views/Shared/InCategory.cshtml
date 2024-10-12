@@ -1,44 +1,43 @@
 ﻿@model List<WebAspDBeaverStudy.Data.Entities.ProductEntity>
 
-<h1 class="text-center">Choose categoty</h1>
+<h1 class="text-center">Products</h1>
 
 <div class="container">
-    <a asp-action="Create" class="btn btn-success">Add</a>
+    <a href="/" class="btn btn-success">Back</a>
     <div class="row">
         @foreach (var item in Model)
         {
             <div class="col-md-3" id="@("ProductItem" + item.Id)">
                 <div class="card" style="width: 100%;">
-                    @* <img src="/uploading/300_@item.ProductImages.Image" class="card-img-top"> *@
-                    <div id="carouselExampleIndicators" class="carousel slide">
-                <div class="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                </div>
-                <div class="carousel-inner">
-                @foreach(var imgItem in item.ProductImages)
-                {
-                <div class="carousel-item active">
-                <img src="/uploading/300_@imgItem.Image" class="d-block w-100" alt="...">
-                </div>
-                }
-                </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-                </button>
-                </div>
+                    <div id="carouselExampleIndicators_@item.Id" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            @for (int i = 0; i < item.ProductImages.Count; i++)
+                            {
+                                <button type="button" data-bs-target="#carouselExampleIndicators_@item.Id" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i + 1)"></button>
+                            }
+                        </div>
+                        <div class="carousel-inner">
+                            @for (int i = 0; i < item.ProductImages.Count; i++)
+                            {
+                                var imgItem = item.ProductImages.ElementAt(i);
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="/uploading/300_@imgItem.Image" class="d-block w-100" alt="...">
+                                </div>
+                            }
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators_@item.Id" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators_@item.Id" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                    </div>
 
                     <div class="card-body">
                         <h5 class="card-title">@item.Name @item.Price $</h5>
                         <p class="card-text">@item.Category.Description</p>
-                        <a href="#" class="btn btn-primary" data-name="@item.Name"
-                           data-delete="@item.Id">Delete</a>
                     </div>
                 </div>
             </div>
@@ -66,37 +65,4 @@
 
 @section Scripts {
     <script src="/lib/axios/axios.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
-            var buttonsDelete = document.querySelectorAll('[data-delete]');
-            var categoryName = document.getElementById("categoryName");
-            var idDelete = 0;
-
-            console.log("Loading app", buttonsDelete);
-            buttonsDelete.forEach(btn => {
-                btn.addEventListener("click", function (event) {
-                    event.preventDefault();
-                    var id = this.getAttribute('data-delete');
-                    var name = this.getAttribute('data-name');
-                    // console.log("Delete id", id);
-                    // console.log("Delete name", name);
-                    idDelete = id;
-                    categoryName.innerHTML = name;
-                    modalDelete.show();
-                });
-            });
-
-            document.getElementById("deleteYes").addEventListener("click", () => {
-                console.log("Delete by id", idDelete);
-                axios.post("/Main/Delete/" + idDelete)
-                    .then(res => {
-                        //window.location.reload();
-                        modalDelete.hide();
-                        document.getElementById("ProductItem" + idDelete).remove();
-                        //console.log("Successful deleted")
-                    })
-            })
-        });
-    </script>
 }
