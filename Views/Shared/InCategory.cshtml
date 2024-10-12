@@ -1,4 +1,4 @@
-﻿@model List<WebAspDBeaverStudy.Data.Entities.CategoryEntity>
+﻿@model List<WebAspDBeaverStudy.Data.Entities.ProductEntity>
 
 <h1 class="text-center">Choose categoty</h1>
 
@@ -9,14 +9,36 @@
         {
             <div class="col-md-3" id="@("ProductItem" + item.Id)">
                 <div class="card" style="width: 100%;">
-                    <img src="/uploading/300_@item.Image" class="card-img-top">
+                    @* <img src="/uploading/300_@item.ProductImages.Image" class="card-img-top"> *@
+                    <div id="carouselExampleIndicators" class="carousel slide">
+                <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+                <div class="carousel-inner">
+                @foreach(var imgItem in item.ProductImages)
+                {
+                <div class="carousel-item active">
+                <img src="/uploading/300_@imgItem.Image" class="d-block w-100" alt="...">
+                </div>
+                }
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+                </button>
+                </div>
+
                     <div class="card-body">
-                        <h5 class="card-title">@item.Name</h5>
-                        <p class="card-text">@item.Description</p>
-                        <a asp-action="InCategory" asp-route-id="@item.Id" class="btn btn-primary">Open</a>
-                        <a href="#" class="btn btn-primary" data-name="@item.Name" 
-                        data-delete="@item.Id">Delete</a>
-                        
+                        <h5 class="card-title">@item.Name @item.Price $</h5>
+                        <p class="card-text">@item.Category.Description</p>
+                        <a href="#" class="btn btn-primary" data-name="@item.Name"
+                           data-delete="@item.Id">Delete</a>
                     </div>
                 </div>
             </div>
@@ -43,7 +65,7 @@
 </div>
 
 @section Scripts {
-	<script src="/lib/axios/axios.min.js"></script>
+    <script src="/lib/axios/axios.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));

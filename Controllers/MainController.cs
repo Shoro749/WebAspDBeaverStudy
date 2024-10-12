@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Interfaces;
@@ -81,6 +82,26 @@ namespace WebAspDBeaverStudy.Controllers
             _dbContext.SaveChanges();
 
             return Json(new { text = "Ми його видалили" }); // Вертаю об'єкт у відповідь
+        }
+
+        [HttpGet]
+        public IActionResult InCategory(int id)
+        {
+            var category = _dbContext.Categories.Find(id);
+            var model = _dbContext.Products
+               .Where(p => p.CategoryId == id).ToList();
+
+            foreach(var item in model)
+            {
+                item.ProductImages = _dbContext.ProductsImages.Where(p => p.ProductId == item.Id).ToList();
+            }
+            
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(model);
         }
     }
 }

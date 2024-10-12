@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Views\Shared\InCategory.cshtml" />
     <None Include="Views\Shared\_MyLayout.cshtml" />
   </ItemGroup>
 
@@ -22,6 +23,14 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\uploading\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\Main\InCategory.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Views\Main\InCategory.cshtml" />
   </ItemGroup>
 
 </Project>
