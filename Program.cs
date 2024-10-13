@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Interfaces;
+using WebAspDBeaverStudy.Mapper;
 using WebAspDBeaverStudy.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("MyConnectionDB")));
 
 builder.Services.AddScoped<IImageWorker, ImageWorker>();
+
+builder.Services.AddAutoMapper(typeof(AppMapperProfile));
 
 builder.Services.AddControllersWithViews();
 

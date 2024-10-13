@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAspDBeaverStudy.Data;
 using WebAspDBeaverStudy.Data.Entities;
@@ -12,21 +14,26 @@ namespace WebAspDBeaverStudy.Controllers
         private readonly AppDbContext _dbContext;
         private readonly IImageWorker _imageWorker;
         private readonly IWebHostEnvironment _environment;
+        private readonly IMapper _mapper;
 
         //DI - Depencecy Injection
         public MainController(AppDbContext context,
-            IWebHostEnvironment environment, IImageWorker imageWorker)
+            IWebHostEnvironment environment, IImageWorker imageWorker,
+            IMapper mapper)
         {
             _dbContext = context;
             _environment = environment;
             _imageWorker = imageWorker;
+            _mapper = mapper;
         }
 
         // Метод у контролері називається - action - дія
-        public IActionResult Index() //IActionResult - для html сторінки
+        public IActionResult Index()
         {
-            var model = _dbContext.Categories.ToList(); // Отримання списку категорій
-            return View(model); // Відправлення його у Index.cshtml
+            List<CategoryItemViewModel> model = _dbContext.Categories
+                .ProjectTo<CategoryItemViewModel>(_mapper.ConfigurationProvider)
+                .ToList(); 
+            return View(model);
         }
 
         [HttpGet] 
@@ -38,7 +45,7 @@ namespace WebAspDBeaverStudy.Controllers
         [HttpPost] //це означає, що ми отримуємо дані із форми від клієнта
         public IActionResult Create(CategoryCreateViewModel model)
         {
-            var entity = new CategoryEntity();
+            var entity = _mapper.Map<CategoryEntity>(model);
             //Збережння в Базу даних інформації
             var dirName = "uploading";
             var dirSave = Path.Combine(_environment.WebRootPath, dirName); // Шлях до папки завантаження
@@ -58,8 +65,6 @@ namespace WebAspDBeaverStudy.Controllers
                 entity.Image = _imageWorker.Save(model.Photo);
             }
             // Запис данних і збереження
-            entity.Name = model.Name;
-            entity.Description = model.Description;
             _dbContext.Categories.Add(entity);
             _dbContext.SaveChanges();
             //Переходимо до списку усіх категорій, тобото визиваємо метод Index нашого контролера
