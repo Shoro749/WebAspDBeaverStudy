@@ -90,6 +90,30 @@ namespace WebAspDBeaverStudy.Controllers
             return Json(new { text = "Ми його видалили" }); // Повертаємо JSON об'єкт з повідомленням
         }
 
+        public IActionResult ProductDelete(int id)
+        {
+            var product = _dbContext.Products.Find(id); 
+            
+            if (product == null) 
+            {
+                return NotFound(); 
+            }
+            var productImg = _dbContext.ProductsImages.Where(p => p.ProductId == product.Id).ToList();
+
+            foreach (var img in productImg)
+            {
+                if (!string.IsNullOrEmpty(img.Image))
+                {
+                    _imageWorker.Delete(img.Image);
+                    _dbContext.ProductsImages.Remove(img);
+                }
+            }
+            _dbContext.Products.Remove(product); 
+            _dbContext.SaveChanges(); 
+
+            return Json(new { text = "Ми його видалили" }); 
+        }
+
         [HttpGet]
         public IActionResult InCategory(int id)
         {
@@ -97,7 +121,7 @@ namespace WebAspDBeaverStudy.Controllers
             var model = _dbContext.Products
                .Where(p => p.CategoryId == id).ToList(); // Отримуємо список продуктів для даної категорії
 
-            foreach (var item in model) 
+            foreach (var item in model)
             {
                 item.ProductImages = _dbContext.ProductsImages.Where(p => p.ProductId == item.Id).ToList(); // Отримуємо зображення продуктів
             }
