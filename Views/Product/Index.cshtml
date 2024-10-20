@@ -66,6 +66,9 @@
                     <div class="card-body">
                         <h5 class="card-title">@item.Name @item.Price $</h5>
                         <p class="card-text">@item.Category.Description</p>
+                        @* <a asp-action="InCategory" asp-route-id="@item.Id" class="btn btn-primary">Open</a> *@
+                        <a href="#" class="btn btn-primary" data-name="@item.Name"
+                           data-delete="@item.Id">Delete</a>
                     </div>
                 </div>
             </div>
@@ -73,24 +76,57 @@
     </div>
 </div>
 
+<div class="modal" id="modalDelete" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Ви дійсно бажаєте видалити</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Буде проведено видалення <span id="categoryName"></span>?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Скасувати</button>
+                <button type="button" class="btn btn-primary" id="deleteYes">Підтвердити</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="/lib/axios/axios.min.js"></script>
     <script>
-        document.getElementById('searchButton').addEventListener('click', function () {
-            var name = document.getElementById('searchName').value.toLowerCase();
-            var maxPrice = parseFloat(document.getElementById('searchPrice').value) || Infinity;
+        document.addEventListener("DOMContentLoaded", () => {
+            var modalDelete = new bootstrap.Modal(document.getElementById('modalDelete'));
+            var buttonsDelete = document.querySelectorAll('[data-delete]');
+            var categoryName = document.getElementById("categoryName");
+            var idDelete = 0;
 
-            var productItems = document.querySelectorAll('.product-item');
-            productItems.forEach(function (item) {
-                var productName = item.getAttribute('data-name').toLowerCase();
-                var productPrice = parseFloat(item.getAttribute('data-price'));
-
-                if (productName.includes(name) && productPrice <= maxPrice) {
-                    item.style.display = '';
-                } else {
-                    item.style.display = 'none';
-                }
+            console.log("Loading app", buttonsDelete);
+            buttonsDelete.forEach(btn => {
+                btn.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    var id = this.getAttribute('data-delete');
+                    var name = this.getAttribute('data-name');
+                    // console.log("Delete id", id);
+                    // console.log("Delete name", name);
+                    idDelete = id;
+                    categoryName.innerHTML = name;
+                    modalDelete.show();
+                });
             });
+
+            document.getElementById("deleteYes").addEventListener("click", () => {
+                console.log("Delete by id", idDelete);
+                axios.post("/Main/Delete/" + idDelete)
+                    .then(res => {
+                        //window.location.reload();
+                        modalDelete.hide();
+                        document.getElementById("ProductItem" + idDelete).remove();
+                        //console.log("Successful deleted")
+                    })
+            })
         });
     </script>
 }

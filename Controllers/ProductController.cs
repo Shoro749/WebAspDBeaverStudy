@@ -19,9 +19,10 @@ namespace WebAspDBeaverStudy.Controllers
             _mapper = mapper;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
             List<ProductItemViewModel> model = _dbContext.Products
+                .Where(p => p.CategoryId == id)
                 .ProjectTo<ProductItemViewModel>(_mapper.ConfigurationProvider)
                 .ToList();
             return View(model);

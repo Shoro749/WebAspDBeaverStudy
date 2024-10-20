@@ -11,6 +11,7 @@ namespace WebAspDBeaverStudy.Mapper
         {
             CreateMap<CategoryEntity, CategoryItemViewModel>();
             CreateMap<CategoryCreateViewModel, CategoryEntity>();
+            CreateMap<ProductCreateViewModel, ProductEntity>();
 
             CreateMap<ProductEntity, ProductItemViewModel>()
                 .ForMember(x => x.Images, opt => opt.MapFrom(p => p.ProductImages.Select(x => x.Image).ToList()))
