@@ -81,12 +81,37 @@ namespace WebAspDBeaverStudy.Services
 
         public void Delete(string fileName) // Метод для видалення зображення
         {
-            foreach (int size in sizes)
+            if (string.IsNullOrEmpty(fileName))
             {
-                var fileSave = Path.Combine(_environment.WebRootPath, dirName, $"{size}_{fileName}");
-                if (File.Exists(fileSave)) // Якщо файл існує
-                    File.Delete(fileSave); // Видаляємо файл
+                return; // Ігноруємо порожні назви файлів
             }
+
+            // Складаємо шляхи до всіх зменшених версій
+            var filePaths = sizes.Select(size => Path.Combine(_environment.WebRootPath, dirName, $"{size}_{fileName}"))
+                               .ToList();
+
+            // Видаляємо всі файли одночасно для покращення продуктивності
+            Parallel.ForEach(filePaths, filePath =>
+            {
+                if (File.Exists(filePath))
+                {
+                    try
+                    {
+                        File.Delete(filePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Логуємо або обробляємо помилки видалення окремих файлів
+                        Console.WriteLine($"Помилка видалення файлу '{filePath}': {ex.Message}");
+                    }
+                }
+            });
+            //foreach (int size in sizes)
+            //{
+            //    var fileSave = Path.Combine(_environment.WebRootPath, dirName, $"{size}_{fileName}");
+            //    if (File.Exists(fileSave)) // Якщо файл існує
+            //        File.Delete(fileSave); // Видаляємо файл
+            //}
         }
 
         public string Save(IFormFile file) // Метод для збереження зображення з форми

@@ -33,6 +33,7 @@
                         <p class="card-text">@item.Description</p>
                         <a asp-action="InCategory" asp-route-id="@item.Id" class="btn btn-primary">Open</a>
                         @* <a asp-controller="Product" asp-action="Index" asp-route-id="@item.Id" class="btn btn-primary">Open pr</a> *@
+                        <a asp-controller="Product" asp-action="Index" asp-route-id="@item.Id" class="btn btn-primary">Open pr</a>
                         <a href="#" class="btn btn-primary" data-name="@item.Name" 
                         data-delete="@item.Id">Delete</a>
                         

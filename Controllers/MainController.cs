@@ -95,30 +95,6 @@ namespace WebAspDBeaverStudy.Controllers
             return Json(new { text = "Ми його видалили" }); // Повертаємо JSON об'єкт з повідомленням
         }
 
-        public IActionResult ProductDelete(int id)
-        {
-            var product = _dbContext.Products.Find(id); 
-            
-            if (product == null) 
-            {
-                return NotFound(); 
-            }
-            var productImg = _dbContext.ProductsImages.Where(p => p.ProductId == product.Id).ToList();
-
-            foreach (var img in productImg)
-            {
-                if (!string.IsNullOrEmpty(img.Image))
-                {
-                    _imageWorker.Delete(img.Image);
-                    _dbContext.ProductsImages.Remove(img);
-                }
-            }
-            _dbContext.Products.Remove(product); 
-            _dbContext.SaveChanges(); 
-
-            return Json(new { text = "Ми його видалили" }); 
-        }
-
         [HttpGet]
         public IActionResult InCategory(int id)
         {
@@ -173,42 +149,31 @@ namespace WebAspDBeaverStudy.Controllers
                 _dbContext.Add(imageProduct);
                 _dbContext.SaveChanges();
             }
-            //var entity = _mapper.Map<ProductEntity>(model);
-            //var dirName = "uploading";
-            //var dirSave = Path.Combine(_environment.WebRootPath, dirName); 
-            //if (!Directory.Exists(dirSave)) 
-            //{
-            //    Directory.CreateDirectory(dirSave);
-            //}
-            //if (model.Photos != null) 
-            //{
-            //    //унікальне значенн, яке ніколи не повториться
-            //    //string fileName = Guid.NewGuid().ToString();
-            //    //var ext = Path.GetExtension(model.Photo.FileName);
-            //    //fileName += ext;
-            //    //var saveFile = Path.Combine(dirSave, fileName);
-            //    //using (var stream = new FileStream(saveFile, FileMode.Create)) 
-            //    //    model.Photo.CopyTo(stream);
-            //    for (int i = 0; i < model.Photos.Count; i++)
-            //    {
-            //        entity.ProductImages.Add(_imageWorker.Save(model.Photos[i]));
-
-            //    }
-            //    foreach (var photo in model.Photos)
-            //    {
-            //        entity.ProductImages = _imageWorker.Save(photo);
-            //    }
-
-            //    //var imageProduct = new ProductImageEntity
-            //    //{
-            //    //    Product = product,
-            //    //    Image = imageName,
-            //    //    Priority = i
-            //    //};
-            //}
-            //_dbContext.Categories.Add(entity);
-            //_dbContext.SaveChanges();
             return Redirect("/");
+        }
+
+        public IActionResult ProductDelete(int id)
+        {
+            var product = _dbContext.Products.Find(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+            var productImg = _dbContext.ProductsImages.Where(p => p.ProductId == product.Id).ToList();
+
+            foreach (var img in productImg)
+            {
+                if (!string.IsNullOrEmpty(img.Image))
+                {
+                    _imageWorker.Delete(img.Image);
+                    _dbContext.ProductsImages.Remove(img);
+                }
+            }
+            _dbContext.Products.Remove(product);
+            _dbContext.SaveChanges();
+
+            return Json(new { text = "Ми його видалили" });
         }
     }
 }
