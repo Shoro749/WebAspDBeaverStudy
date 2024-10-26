@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebAspDBeaverStudy.Data;
+using WebAspDBeaverStudy.Data.Entities;
 using WebAspDBeaverStudy.Interfaces;
 using WebAspDBeaverStudy.Models.Product;
 
@@ -30,27 +32,66 @@ namespace WebAspDBeaverStudy.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult Create(/*int categoryId*/)
+        {
+            var model = new ProductCreateViewModel
+            {
+                Categories = _dbContext.Categories.Select(c => new SelectListItem
+                {
+                    Value = c.Id.ToString(),
+                    Text = c.Name
+                })
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Create(ProductCreateViewModel model)
+        {
+            var product = _mapper.Map<ProductEntity>(model);
+            product.Category = _dbContext.Categories.Find(model.CategoryId);
+            _dbContext.Add(product);
+            _dbContext.SaveChanges();
+            int imageCount = model.Photos.Count();
+            for (int i = 0; i < imageCount; i++)
+            {
+                var imageProduct = new ProductImageEntity
+                {
+                    Product = product,
+                    Image = _imageWorker.Save(model.Photos.ElementAt(i)),
+                    Priority = i
+                };
+                _dbContext.Add(imageProduct);
+                _dbContext.SaveChanges();
+            }
+            return Redirect("/");
+        }
+
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            var product = _dbContext.Products.Include(x => x.ProductImages).SingleOrDefault(x => x.Id == id);
+            var product = _dbContext.Products.Find(id);
+
             if (product == null)
             {
                 return NotFound();
             }
-            if (product.ProductImages != null)
-            {
-                foreach (var productImage in product.ProductImages)
-                {
-                    _imageWorker.Delete(productImage.Image);
-                    _dbContext.ProductsImages.Remove(productImage);
+            var productImg = _dbContext.ProductsImages.Where(p => p.ProductId == product.Id).ToList();
 
+            foreach (var img in productImg)
+            {
+                if (!string.IsNullOrEmpty(img.Image))
+                {
+                    _imageWorker.Delete(img.Image);
+                    _dbContext.ProductsImages.Remove(img);
                 }
             }
             _dbContext.Products.Remove(product);
             _dbContext.SaveChanges();
 
-            return Json(new { text = "Ми його видалили" }); // Вертаю об'єкт у відповідь
+            return Json(new { text = "Ми його видалили" });
         }
     }
 }
