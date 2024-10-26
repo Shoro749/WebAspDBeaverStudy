@@ -1,6 +1,6 @@
-﻿@model WebAspDBeaverStudy.Models.Category.CategoryEditViewModel
+﻿@model WebAspDBeaverStudy.Models.Product.ProductEditViewModel
 
-<h1 class="text-center">Редагувати категорію</h1>
+<h1 class="text-center">Редагувати продукт</h1>
 
 <div class="container">
     <div class="row">
@@ -11,12 +11,12 @@
                 <input type="text" class="form-control" asp-for="Name">
             </div>
             <div class="mb-3">
-                <label asp-for="Photo" class="form-label"></label>
-                <input type="file" class="form-control" asp-for="Photo" />
+                <label asp-for="Photos" class="form-label"></label>
+                <input type="file" class="form-control" asp-for="Photos" multiple/>
             </div>
             <div class="mb-3">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea class="form-control" rows="3" asp-for="Description"></textarea>
+                <label asp-for="Price" class="form-label"></label>
+                <textarea class="form-control" rows="3" asp-for="Price"></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Редагувати</button>
         </form>
