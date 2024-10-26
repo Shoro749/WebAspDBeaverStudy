@@ -96,6 +96,48 @@ namespace WebAspDBeaverStudy.Controllers
         }
 
         [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = _dbContext.Categories.Find(id);
+            var model = new CategoryEditViewModel
+            {
+                Id = id,
+                Name = category.Name,
+                Description = category.Description
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(CategoryEditViewModel model)
+        {
+            var entity = _mapper.Map<CategoryEntity>(model);
+            var category = _dbContext.Categories.Find(model.Id); 
+
+            if (!string.IsNullOrEmpty(category.Image))
+            {
+                _imageWorker.Delete(category.Image);
+            }
+
+            var dirName = "uploading";
+            var dirSave = Path.Combine(_environment.WebRootPath, dirName);
+            if (!Directory.Exists(dirSave))
+            {
+                Directory.CreateDirectory(dirSave);
+            }
+            if (model.Photo != null)
+            {
+                category.Image = _imageWorker.Save(model.Photo);
+            }
+            category.Name = entity.Name;
+            category.Description = entity.Description;
+
+            _dbContext.Categories.Update(category);
+            _dbContext.SaveChanges();
+            return Redirect("/");
+        }
+
+        [HttpGet]
         public IActionResult InCategory(int id)
         {
             var category = _dbContext.Categories.Find(id);
