@@ -66,6 +66,7 @@
 
                     <div class="card-body">
                         <h5 class="card-title">@item.Name @item.Price $</h5>
+                        <a asp-action="Open" asp-route-id="@item.Id" class="btn btn-primary">Open</a>
                         <a href="#" class="btn btn-primary" data-name="@item.Name"
                            data-delete="@item.Id">Delete</a>
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a>

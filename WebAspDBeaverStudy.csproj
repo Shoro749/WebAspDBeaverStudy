@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Views\Shared\InCategory.cshtml" />
     <None Include="Views\Shared\_MyLayout.cshtml" />
   </ItemGroup>
 

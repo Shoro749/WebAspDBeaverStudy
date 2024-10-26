@@ -13,6 +13,7 @@ namespace WebAspDBeaverStudy.Mapper
             CreateMap<CategoryEntity, CategoryItemViewModel>();
             CreateMap<CategoryCreateViewModel, CategoryEntity>();
             CreateMap<CategoryEditViewModel, CategoryEntity>();
+            CreateMap<ProductEntity, ProductItemViewModel>();
             CreateMap<ProductCreateViewModel, ProductEntity>();
             CreateMap<ProductEditViewModel, ProductEntity>();
 

@@ -1,0 +1,51 @@
+﻿@model WebAspDBeaverStudy.Models.Product.ProductItemViewModel
+
+<h1 class="text-center">Product</h1>
+
+<div class="container">
+    <a href="/" class="btn btn-success">Back</a>
+
+    <div class="container my-5">
+        <div class="row align-items-center">
+            <!-- Ліва частина з фотографією -->
+            @if (Model.Images != null && Model.Images.Count > 0)
+            {
+                <!-- Головне зображення продукту -->
+                <img src="/uploading/1200_@Model.Images.ElementAt(0)" alt="Product Image" class="img-fluid rounded">
+
+                <!-- Додаткові зображення -->
+                <div class="row row-cols-3 g-2">
+                    @for (int i = 1; i < Model.Images.Count; i++)
+                    {
+                        <div class="col">
+                            <img src="/uploading/150_@Model.Images[i]" alt="Product Image" class="img-fluid rounded">
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p>Зображення відсутні.</p>
+            }
+
+            <!-- Права частина з текстом -->
+            <div class="col-md-6">
+                <h1 class="display-4">@Model.Name</h1>
+                <p class="lead">Це короткий опис продукту, який привертає увагу клієнта та допомагає йому дізнатися основні переваги товару.</p>
+
+                <p>
+                    Тут можна додати більш детальну інформацію про продукт, включаючи його характеристики, переваги, матеріали та інші важливі деталі, які можуть бути цікавими для покупця.
+                    Також можна розповісти про способи використання продукту або про його унікальні властивості.
+                </p>
+
+                <div class="mt-4">
+                    <h2 class="display-5">@Model.Price $</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/lib/axios/axios.min.js"></script>
+}

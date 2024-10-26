@@ -147,5 +147,25 @@ namespace WebAspDBeaverStudy.Controllers
             }
             return Redirect("/");
         }
+
+        [HttpGet]
+        public IActionResult Open(int id)
+        {
+            var product = _dbContext.Products.Find(id);
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var model = _mapper.Map<ProductItemViewModel>(product);
+
+            model.Images = _dbContext.ProductsImages
+                .Where(p => p.ProductId == id)
+                .Select(img => img.Image)
+                .ToList();
+
+            return View(model);
+        }
     }
 }
